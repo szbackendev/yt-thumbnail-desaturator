@@ -1,0 +1,105 @@
+/* YouTube Thumbnail Desaturator — Content Styles */
+
+:root {
+  --yt-thumb-sat: 30%;
+  --yt-thumb-transition: filter 0.22s ease-in-out;
+}
+
+/* ==========================================================================
+   1. STANDARD VIDEO THUMBNAILS (FEEDS, SEARCH, CHANNEL, SIDEBAR)
+   ========================================================================== */
+html[data-yt-sat-enabled="true"] ytd-thumbnail img,
+html[data-yt-sat-enabled="true"] yt-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"] ytd-rich-grid-media #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-compact-video-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-video-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-grid-video-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-playlist-thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-playlist-video-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-playlist-panel-video-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-compact-playlist-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-compact-radio-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-radio-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-movie-renderer #thumbnail img,
+html[data-yt-sat-enabled="true"] ytd-notification-renderer img,
+html[data-yt-sat-enabled="true"] ytd-channel-video-player-renderer img,
+html[data-yt-sat-enabled="true"] ytd-channel-featured-content-renderer img,
+html[data-yt-sat-enabled="true"] .ytp-ce-covering-image,
+html[data-yt-sat-enabled="true"] .ytp-ce-expanding-image,
+html[data-yt-sat-enabled="true"] .ytp-videowall-still-image,
+html[data-yt-sat-enabled="true"] ytd-miniplayer img,
+html[data-yt-sat-enabled="true"] yt-image img,
+html[data-yt-sat-enabled="true"] yt-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"] yt-lockup-view-model img,
+html[data-yt-sat-enabled="true"] yt-collection-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"] ytd-thumbnail video,
+html[data-yt-sat-enabled="true"] ytd-moving-thumbnail-renderer,
+html[data-yt-sat-enabled="true"] ytd-video-preview,
+html[data-yt-sat-enabled="true"] yt-inline-player-view-model {
+  filter: saturate(var(--yt-thumb-sat, 30%)) !important;
+  transition: var(--yt-thumb-transition);
+}
+
+/* ==========================================================================
+   2. SHORTS THUMBNAILS (CAROUSELS, SHELVES, SEARCH, CHANNELS)
+   ========================================================================== */
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-item-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-item-renderer yt-image,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-rich-shelf-renderer ytd-reel-item-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-rich-grid-slim-media img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-shelf-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytm-shorts-lockup-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytm-shorts-lockup-view-model-v2 img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] yt-shorts-lockup-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] [class*="shorts-lockup"] img {
+  filter: saturate(var(--yt-thumb-sat, 30%)) !important;
+  transition: var(--yt-thumb-transition);
+}
+
+/* ==========================================================================
+   3. HOVER RESTORATION (Smoothly restore 100% saturation on hover)
+   ========================================================================== */
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-thumbnail:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-thumbnail-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-item-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-compact-video-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-grid-video-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-playlist-thumbnail:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-playlist-video-renderer:hover #thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-reel-item-renderer:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-grid-slim-media:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytm-shorts-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-shorts-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-moving-thumbnail-renderer,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-preview,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view-model {
+  filter: saturate(100%) !important;
+}
+
+/* ==========================================================================
+   4. EXCLUSIONS (Channel Avatars & Active Video Players)
+   ========================================================================== */
+/* NEVER desaturate avatars/profile icons */
+html[data-yt-sat-enabled="true"] .ytSpecAvatarShapeImage,
+html[data-yt-sat-enabled="true"] yt-avatar-shape img,
+html[data-yt-sat-enabled="true"] #channel-thumbnail img,
+html[data-yt-sat-enabled="true"] #avatar img,
+html[data-yt-sat-enabled="true"] yt-img-shadow#avatar img,
+html[data-yt-sat-enabled="true"] ytd-channel-avatar-renderer img,
+html[data-yt-sat-enabled="true"] ytd-comment-view-model #author-thumbnail img,
+html[data-yt-sat-enabled="true"] yt-decorated-avatar-view-model img {
+  filter: none !important;
+}
+
+/* NEVER desaturate active video player */
+html[data-yt-sat-enabled="true"] .html5-main-video,
+html[data-yt-sat-enabled="true"] #movie_player video,
+html[data-yt-sat-enabled="true"] ytd-player video,
+html[data-yt-sat-enabled="true"] ytd-watch-flexy #player video,
+html[data-yt-sat-enabled="true"] ytd-shorts video,
+html[data-yt-sat-enabled="true"] ytd-reel-video-renderer .html5-main-video {
+  filter: none !important;
+}
+

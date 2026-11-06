@@ -1,0 +1,11 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs and runtime caches
+*.log
+__pycache__/
+
+# Editor directories
+.idea/
+.vscode/

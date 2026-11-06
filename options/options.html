@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Saturation — Настройки</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <svg class="icon" width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8 1.5A6.5 6.5 0 0 0 8 14.5V1.5Z" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M8 1.5A6.5 6.5 0 0 1 8 14.5V1.5Z" fill="#e02424"/>
+        </svg>
+        <div class="brand-text">
+          <h1 id="opt-page-title">Параметры расширения</h1>
+          <span class="version">YouTube Thumbnail Saturation</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="hairline"></div>
+
+    <!-- Language Section -->
+    <section class="section">
+      <div class="section-info">
+        <h2 id="opt-lang-title">Язык интерфейса</h2>
+        <p id="opt-lang-desc">Выберите язык для всплывающего окна и настроек расширения.</p>
+      </div>
+
+      <div class="lang-selector" role="radiogroup" aria-label="Язык интерфейса">
+        <label class="lang-option">
+          <input type="radio" name="lang" value="auto" checked>
+          <div class="lang-box">
+            <span class="lang-name" id="opt-lang-auto">Системный (Авто)</span>
+            <span class="lang-sub" id="opt-lang-auto-desc">Как в браузере</span>
+          </div>
+        </label>
+
+        <label class="lang-option">
+          <input type="radio" name="lang" value="ru">
+          <div class="lang-box">
+            <span class="lang-name">Русский</span>
+            <span class="lang-sub">Russian</span>
+          </div>
+        </label>
+
+        <label class="lang-option">
+          <input type="radio" name="lang" value="en">
+          <div class="lang-box">
+            <span class="lang-name">English</span>
+            <span class="lang-sub">Английский</span>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <div class="hairline"></div>
+
+    <!-- Storage Info -->
+    <section class="section">
+      <div class="section-info">
+        <h2 id="opt-sync-title">Синхронизация</h2>
+        <p id="opt-sync-desc">Настройки сохраняются в аккаунте браузера и автоматически синхронизируются между устройствами.</p>
+      </div>
+    </section>
+
+    <!-- Save Indicator -->
+    <footer class="footer">
+      <span class="save-status" id="save-status">Параметры сохранены</span>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
+

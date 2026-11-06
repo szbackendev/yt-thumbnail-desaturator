@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Saturation</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="panel">
+    <!-- Header -->
+    <header class="header">
+      <div class="title-group">
+        <svg class="app-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8 1.5A6.5 6.5 0 0 0 8 14.5V1.5Z" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M8 1.5A6.5 6.5 0 0 1 8 14.5V1.5Z" fill="#e02424"/>
+        </svg>
+        <span class="title" id="txt-title">Насыщенность YouTube</span>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-icon" id="btn-options" title="Параметры">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <label class="switch" id="txt-switch-label" title="Включить или выключить">
+          <input type="checkbox" id="enabled-toggle" checked>
+          <span class="switch-track"></span>
+        </label>
+      </div>
+    </header>
+
+    <!-- Main Saturation Control -->
+    <section class="section" id="controls">
+      <div class="row-between">
+        <label for="saturation-slider" class="label" id="txt-label-thumbnails">Обложки видео</label>
+        <div class="value-wrapper">
+          <input type="number" id="saturation-num" min="0" max="100" value="30" aria-label="Процент насыщенности">
+          <span class="unit">%</span>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <input type="range" id="saturation-slider" min="0" max="100" value="30" step="1">
+      </div>
+
+      <!-- Presets -->
+      <nav class="preset-group" aria-label="Быстрые пресеты">
+        <button type="button" class="preset-btn" id="txt-preset-bw" data-val="0">Ч/Б</button>
+        <button type="button" class="preset-btn" data-val="25">25%</button>
+        <button type="button" class="preset-btn" data-val="50">50%</button>
+        <button type="button" class="preset-btn" data-val="75">75%</button>
+        <button type="button" class="preset-btn" data-val="100">100%</button>
+      </nav>
+    </section>
+
+    <div class="hairline"></div>
+
+    <!-- Options -->
+    <section class="options-group" id="options">
+      <label class="option-row">
+        <span class="option-text" id="txt-opt-shorts">Применять к Shorts</span>
+        <input type="checkbox" id="shorts-toggle" checked>
+      </label>
+
+      <label class="option-row">
+        <span class="option-text" id="txt-opt-hover">Цвет при наведении</span>
+        <input type="checkbox" id="hover-toggle" checked>
+      </label>
+    </section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
