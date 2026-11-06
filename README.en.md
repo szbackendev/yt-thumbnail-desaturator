@@ -100,3 +100,4 @@ Because **Zen Browser** is built upon modern Gecko (Firefox 109+), standard WebE
 - **Zen Browser** (all modern releases)
 - **Mozilla Firefox** (109+)
 - **Floorp** / **Waterfox** / other Gecko forks
+
