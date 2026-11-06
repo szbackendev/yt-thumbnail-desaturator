@@ -9,3 +9,11 @@ __pycache__/
 # Editor directories
 .idea/
 .vscode/
+
+# Local developer & AI agent context files
+AGENTS.md
+LONG_MEMORY.md
+BUGS.md
+GOTCHAS.md
+DECISIONS.md
+LOGFILE.md
