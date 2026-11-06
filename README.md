@@ -1,5 +1,7 @@
 # YouTube Thumbnail Desaturator (Zen & Firefox Extension)
 
+> **Language / Язык:** **Русский** | [English](README.en.md)
+
 > [!NOTE]
 > **AI Created**: Проект разработан с использованием возможностей современных ИИ-ассистентов для архитектуры, верстки и логики.
 

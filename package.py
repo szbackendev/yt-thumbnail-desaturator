@@ -9,6 +9,7 @@ import zipfile
 FILES_TO_PACK = [
     'manifest.json',
     'README.md',
+    'README.en.md',
     'content/content.css',
     'content/content.js',
     'popup/popup.html',

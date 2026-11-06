@@ -171,6 +171,41 @@ class DomAndI18nTests(unittest.TestCase):
         self.assertEqual(ru_keys, en_keys, "Options i18n RU and EN dictionaries must have identical keys")
 
 
+class DocumentationAndAgentsTests(unittest.TestCase):
+    """Verify documentation limits and bilingual cross-linking."""
+
+    def test_agents_md_strict_under_200_lines(self):
+        agents_path = os.path.join(PROJECT_ROOT, 'AGENTS.md')
+        self.assertTrue(os.path.isfile(agents_path), "AGENTS.md must exist")
+        with open(agents_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        line_count = len(lines)
+        self.assertLessEqual(
+            line_count,
+            200,
+            f"AGENTS.md must strictly stay under 200 lines (current: {line_count})"
+        )
+
+    def test_readme_bilingual_cross_linking(self):
+        readme_ru_path = os.path.join(PROJECT_ROOT, 'README.md')
+        readme_en_path = os.path.join(PROJECT_ROOT, 'README.en.md')
+
+        self.assertTrue(os.path.isfile(readme_ru_path), "README.md must exist")
+        self.assertTrue(os.path.isfile(readme_en_path), "README.en.md must exist")
+
+        with open(readme_ru_path, 'r', encoding='utf-8') as f:
+            ru_lines = f.readlines()
+        with open(readme_en_path, 'r', encoding='utf-8') as f:
+            en_lines = f.readlines()
+
+        # Both must cross-link in the first 20 lines (first half of document)
+        ru_header = "".join(ru_lines[:20])
+        en_header = "".join(en_lines[:20])
+
+        self.assertIn("README.en.md", ru_header, "README.md must link to README.en.md in the first 20 lines")
+        self.assertIn("README.md", en_header, "README.en.md must link to README.md in the first 20 lines")
+
+
 class PackagingTests(unittest.TestCase):
     """Test package.py and xpi archive creation."""
 
@@ -191,6 +226,8 @@ class PackagingTests(unittest.TestCase):
             self.assertIsNone(corrupt, "ZIP archive contains corrupted files")
             namelist = z.namelist()
             self.assertIn('manifest.json', namelist)
+            self.assertIn('README.md', namelist)
+            self.assertIn('README.en.md', namelist)
             self.assertIn('content/content.css', namelist)
             self.assertIn('content/content.js', namelist)
             self.assertIn('popup/popup.html', namelist)
@@ -201,3 +238,4 @@ class PackagingTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
