@@ -58,8 +58,7 @@ thumbnail_yt_saturation_ext/
    ```
    *(или перейдите в Меню -> Инструменты -> Отладка дополнений)*.
 3. Нажмите кнопку **«Загрузить временное дополнение…»** (*Load Temporary Add-on…*).
-4. В появившемся диалоговом окне выберите файл `manifest.json` из этой папки:
-   `c:\Users\user\Desktop\Desktop\projects\ai data\antigravity_ide\thumbnail_yt_saturation_ext\manifest.json`.
+4. Выберите папку с расширением и там файл manifest.json.
 5. Расширение мгновенно появится в панели расширений Zen!
 6. Откройте [YouTube](https://www.youtube.com), нажмите на иконку расширения в панели инструментов и настройте комфортный уровень насыщенности.
 
