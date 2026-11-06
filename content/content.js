@@ -1,12 +1,12 @@
 /**
  * YouTube Thumbnail Desaturator — Content Script
  * Applies CSS attributes and variables to document.documentElement
- * Listens for live updates via storage.onChanged
+ * Listens for live updates via storage.onChanged and YouTube SPA navigation
  */
 (function () {
   'use strict';
 
-  const extApi = typeof browser !== 'undefined' ? browser : chrome;
+  const extApi = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
 
   const DEFAULT_CONFIG = {
     enabled: true,
@@ -29,10 +29,13 @@
       return;
     }
 
-    const isEnabled = config.enabled !== false;
-    const saturation = typeof config.saturation === 'number' ? Math.max(0, Math.min(100, config.saturation)) : DEFAULT_CONFIG.saturation;
-    const applyShorts = config.applyShorts !== false;
-    const hoverRestore = config.hoverRestore !== false;
+    const cfg = config || DEFAULT_CONFIG;
+    const isEnabled = cfg.enabled !== false;
+    const saturation = typeof cfg.saturation === 'number'
+      ? Math.max(0, Math.min(100, cfg.saturation))
+      : (parseInt(cfg.saturation, 10) || DEFAULT_CONFIG.saturation);
+    const applyShorts = cfg.applyShorts !== false;
+    const hoverRestore = cfg.hoverRestore !== false;
 
     root.setAttribute('data-yt-sat-enabled', isEnabled ? 'true' : 'false');
     root.setAttribute('data-yt-sat-shorts', applyShorts ? 'true' : 'false');
@@ -40,43 +43,81 @@
     root.style.setProperty('--yt-thumb-sat', `${saturation}%`);
   }
 
-  const storageArea = extApi.storage && extApi.storage.sync ? extApi.storage.sync : extApi.storage.local;
+  function fetchStorage(defaults, callback) {
+    if (!extApi || !extApi.storage) {
+      callback(defaults);
+      return;
+    }
 
-  function fetchAndApply() {
+    const syncArea = extApi.storage.sync;
+    const localArea = extApi.storage.local;
+    const primary = syncArea || localArea;
+
+    let resolved = false;
+    const done = (data) => {
+      if (!resolved) {
+        resolved = true;
+        callback(data || defaults);
+      }
+    };
+
     try {
-      const getPromise = storageArea.get(DEFAULT_CONFIG);
-      if (getPromise && typeof getPromise.then === 'function') {
-        getPromise.then((items) => {
-          if (items && Object.keys(items).length > 0) {
-            updateDom(items);
-          } else if (extApi.storage && extApi.storage.local) {
-            extApi.storage.local.get(DEFAULT_CONFIG).then(updateDom).catch(() => updateDom(DEFAULT_CONFIG));
+      const p = primary.get(defaults, (items) => {
+        if (extApi.runtime && extApi.runtime.lastError) {
+          // If primary failed, try local fallback
+          if (localArea && primary !== localArea) {
+            try {
+              localArea.get(defaults, (localItems) => done(localItems || defaults));
+            } catch {
+              done(defaults);
+            }
           } else {
-            updateDom(DEFAULT_CONFIG);
+            done(defaults);
+          }
+        } else {
+          done(items);
+        }
+      });
+
+      // Handle Promise return for Gecko / modern MV3
+      if (p && typeof p.then === 'function') {
+        p.then((items) => {
+          if (items && Object.keys(items).length > 0) {
+            done(items);
+          } else if (localArea && primary !== localArea) {
+            localArea.get(defaults).then(done).catch(() => done(defaults));
+          } else {
+            done(defaults);
           }
         }).catch(() => {
-          if (extApi.storage && extApi.storage.local) {
-            extApi.storage.local.get(DEFAULT_CONFIG).then(updateDom).catch(() => updateDom(DEFAULT_CONFIG));
+          if (localArea && primary !== localArea) {
+            try {
+              const lp = localArea.get(defaults, done);
+              if (lp && typeof lp.then === 'function') {
+                lp.then(done).catch(() => done(defaults));
+              }
+            } catch {
+              done(defaults);
+            }
           } else {
-            updateDom(DEFAULT_CONFIG);
+            done(defaults);
           }
         });
-      } else {
-        storageArea.get(DEFAULT_CONFIG, (items) => {
-          updateDom(items || DEFAULT_CONFIG);
-        });
       }
-    } catch (e) {
-      console.warn('[YT Desaturator] Storage call exception:', e);
-      updateDom(DEFAULT_CONFIG);
+    } catch {
+      done(defaults);
     }
+  }
+
+  function fetchAndApply() {
+    fetchStorage(DEFAULT_CONFIG, updateDom);
   }
 
   // Initial early injection
   fetchAndApply();
 
-  // Handle storage changes in real-time without reloading page
-  if (extApi.storage && extApi.storage.onChanged) {
+  // Handle storage changes in real-time across tabs without page reload
+  if (extApi && extApi.storage && extApi.storage.onChanged) {
     extApi.storage.onChanged.addListener((changes, areaName) => {
       if (areaName === 'sync' || areaName === 'local') {
         fetchAndApply();
@@ -84,9 +125,11 @@
     });
   }
 
-  // Backup check on DOMContentLoaded in case documentElement was recreated or attributes stripped
+  // Backup sync on YouTube SPA in-page navigation (e.g. Home -> Watch -> Search)
+  window.addEventListener('yt-navigate-finish', fetchAndApply, { passive: true });
+
+  // Backup check on DOMContentLoaded in case documentElement attributes were manipulated
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', fetchAndApply, { once: true });
   }
 })();
-

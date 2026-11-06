@@ -29,7 +29,6 @@ html[data-yt-sat-enabled="true"] .ytp-ce-expanding-image,
 html[data-yt-sat-enabled="true"] .ytp-videowall-still-image,
 html[data-yt-sat-enabled="true"] ytd-miniplayer img,
 html[data-yt-sat-enabled="true"] yt-image img,
-html[data-yt-sat-enabled="true"] yt-thumbnail-view-model img,
 html[data-yt-sat-enabled="true"] yt-lockup-view-model img,
 html[data-yt-sat-enabled="true"] yt-collection-thumbnail-view-model img,
 html[data-yt-sat-enabled="true"] ytd-thumbnail video,
@@ -56,6 +55,21 @@ html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] [class*="shorts-lock
   transition: var(--yt-thumb-transition);
 }
 
+/* Explicit override when Shorts desaturation is disabled */
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-item-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-item-renderer yt-image,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-rich-shelf-renderer ytd-reel-item-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-rich-grid-slim-media img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-shelf-renderer img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytm-shorts-lockup-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytm-shorts-lockup-view-model-v2 img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] yt-shorts-lockup-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] [class*="shorts-lockup"] img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-item-renderer yt-image img,
+html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-rich-shelf-renderer ytd-reel-item-renderer yt-image img {
+  filter: none !important;
+}
+
 /* ==========================================================================
    3. HOVER RESTORATION (Smoothly restore 100% saturation on hover)
    ========================================================================== */
@@ -63,8 +77,15 @@ html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-thumbnail:hover i
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-thumbnail-view-model:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-lockup-view-model:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-item-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-item-renderer:hover yt-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-item-renderer:hover yt-lockup-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-grid-media:hover #thumbnail img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-renderer:hover yt-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-renderer:hover yt-lockup-view-model img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-compact-video-renderer:hover ytd-thumbnail img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-compact-video-renderer:hover yt-thumbnail-view-model img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-compact-video-renderer:hover yt-lockup-view-model img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-grid-video-renderer:hover ytd-thumbnail img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-playlist-thumbnail:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-playlist-video-renderer:hover #thumbnail img,
@@ -72,6 +93,7 @@ html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-reel-item-rendere
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-grid-slim-media:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytm-shorts-lockup-view-model:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-shorts-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-thumbnail:hover video,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-moving-thumbnail-renderer,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-preview,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view-model {
@@ -79,7 +101,7 @@ html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view
 }
 
 /* ==========================================================================
-   4. EXCLUSIONS (Channel Avatars & Active Video Players)
+   4. EXCLUSIONS (Channel Avatars, Channel Banners & Active Video Players)
    ========================================================================== */
 /* NEVER desaturate avatars/profile icons */
 html[data-yt-sat-enabled="true"] .ytSpecAvatarShapeImage,
@@ -89,7 +111,19 @@ html[data-yt-sat-enabled="true"] #avatar img,
 html[data-yt-sat-enabled="true"] yt-img-shadow#avatar img,
 html[data-yt-sat-enabled="true"] ytd-channel-avatar-renderer img,
 html[data-yt-sat-enabled="true"] ytd-comment-view-model #author-thumbnail img,
-html[data-yt-sat-enabled="true"] yt-decorated-avatar-view-model img {
+html[data-yt-sat-enabled="true"] yt-decorated-avatar-view-model img,
+html[data-yt-sat-enabled="true"] #avatar-btn img,
+html[data-yt-sat-enabled="true"] ytd-masthead yt-img-shadow img,
+html[data-yt-sat-enabled="true"] ytd-masthead yt-avatar-shape img,
+html[data-yt-sat-enabled="true"] ytd-topbar-menu-button-renderer img {
+  filter: none !important;
+}
+
+/* NEVER desaturate channel banners and headers */
+html[data-yt-sat-enabled="true"] ytd-channel-banner-renderer img,
+html[data-yt-sat-enabled="true"] #banner-editor img,
+html[data-yt-sat-enabled="true"] ytd-c4-tabbed-header-renderer #banner img,
+html[data-yt-sat-enabled="true"] [id*="channel-banner"] img {
   filter: none !important;
 }
 
@@ -102,4 +136,3 @@ html[data-yt-sat-enabled="true"] ytd-shorts video,
 html[data-yt-sat-enabled="true"] ytd-reel-video-renderer .html5-main-video {
   filter: none !important;
 }
-

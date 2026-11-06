@@ -1,8 +1,9 @@
 """
-Creates a ready-to-use .zip / .xpi package of the extension.
+Creates a verified .zip / .xpi package of the extension.
 Usage: python package.py
 """
 import os
+import sys
 import zipfile
 
 FILES_TO_PACK = [
@@ -24,13 +25,27 @@ FILES_TO_PACK = [
 
 archive_name = 'yt-thumbnail-desaturator.xpi'
 
+missing = []
+for f in FILES_TO_PACK:
+    if not os.path.isfile(f):
+        missing.append(f)
+
+if missing:
+    print(f"Error: Required package files are missing:\n  " + "\n  ".join(missing), file=sys.stderr)
+    sys.exit(1)
+
 with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as z:
     for f in FILES_TO_PACK:
-        if os.path.exists(f):
-            z.write(f, arcname=f)
-            print(f'Added: {f}')
-        else:
-            print(f'Warning: {f} not found!')
+        z.write(f, arcname=f)
+        print(f'Added: {f}')
 
-print(f'\nPackage created successfully: {archive_name}')
+# Verify archive integrity
+with zipfile.ZipFile(archive_name, 'r') as z:
+    corrupt = z.testzip()
+    if corrupt:
+        print(f"Error: Corrupted entry detected in {archive_name}: {corrupt}", file=sys.stderr)
+        sys.exit(1)
+    file_list = z.namelist()
 
+print(f'\nPackage verified successfully ({len(file_list)} files packed): {archive_name}')
+sys.exit(0)
