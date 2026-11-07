@@ -35,6 +35,12 @@ if missing:
     print(f"Error: Required package files are missing:\n  " + "\n  ".join(missing), file=sys.stderr)
     sys.exit(1)
 
+if os.path.exists(archive_name):
+    try:
+        os.remove(archive_name)
+    except OSError:
+        pass
+
 with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as z:
     for f in FILES_TO_PACK:
         z.write(f, arcname=f)

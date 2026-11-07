@@ -32,6 +32,12 @@ class ManifestTests(unittest.TestCase):
             "Gecko ID must be fixed for persistent storage isolation in Zen Browser"
         )
         self.assertTrue(float(gecko_settings.get('strict_min_version', 0)) >= 109.0)
+        data_perms = gecko_settings.get('data_collection_permissions', {})
+        self.assertEqual(
+            data_perms.get('required'),
+            ['none'],
+            "Mozilla AMO requires data_collection_permissions.required: ['none'] when no data is collected"
+        )
 
     def test_permissions(self):
         permissions = self.manifest.get('permissions', [])
