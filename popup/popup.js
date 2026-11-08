@@ -25,7 +25,8 @@
       presetBw: "Ч/Б",
       presetAria: "Быстрые пресеты",
       applyShorts: "Применять к Shorts",
-      hoverRestore: "Цвет при наведении"
+      hoverRestore: "Цвет при наведении",
+      donate: "Поддержать проект"
     },
     en: {
       title: "YouTube Saturation",
@@ -35,7 +36,8 @@
       presetBw: "B&W",
       presetAria: "Quick presets",
       applyShorts: "Apply to Shorts",
-      hoverRestore: "Restore color on hover"
+      hoverRestore: "Restore color on hover",
+      donate: "Support project"
     }
   };
 
@@ -46,6 +48,8 @@
   const txtOptShorts = document.getElementById('txt-opt-shorts');
   const txtOptHover = document.getElementById('txt-opt-hover');
   const btnOptions = document.getElementById('btn-options');
+  const btnDonate = document.getElementById('btn-donate');
+  const txtDonate = document.getElementById('txt-donate');
 
   function getEffectiveLang(langSetting) {
     if (langSetting === 'ru' || langSetting === 'en') {
@@ -70,6 +74,8 @@
     if (txtOptHover) txtOptHover.textContent = strings.hoverRestore;
     if (btnOptions) btnOptions.title = strings.optionsTitle;
     if (presetGroup) presetGroup.setAttribute('aria-label', strings.presetAria);
+    if (txtDonate) txtDonate.textContent = strings.donate;
+    if (btnDonate) btnDonate.title = strings.donate;
   }
 
   const DEFAULT_SETTINGS = {
@@ -286,6 +292,20 @@
     btnOptions.addEventListener('click', () => {
       if (extApi && extApi.runtime && extApi.runtime.openOptionsPage) {
         extApi.runtime.openOptionsPage();
+      }
+    });
+  }
+
+  if (btnDonate) {
+    btnDonate.addEventListener('click', () => {
+      const donateUrl = extApi && extApi.runtime && extApi.runtime.getURL
+        ? extApi.runtime.getURL('donate/donate.html')
+        : 'donate/donate.html';
+
+      if (extApi && extApi.tabs && extApi.tabs.create) {
+        extApi.tabs.create({ url: donateUrl });
+      } else {
+        window.open(donateUrl, '_blank');
       }
     });
   }

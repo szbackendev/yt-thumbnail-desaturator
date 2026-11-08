@@ -43,6 +43,10 @@ thumbnail_yt_saturation_ext/
 │   ├── options.html      # Extension preferences (language selection)
 │   ├── options.css       # Options UI styling
 │   └── options.js        # Language persistence & storage synchronization
+├── donate/
+│   ├── donate.html       # Built-in donation page (DonationAlerts & Crypto)
+│   ├── donate.css        # Donation page styling
+│   └── donate.js         # Wallet addresses, one-click copy & localization
 ├── tests/
 │   └── test_extension.py # Automated test suite (Manifest, CSS, JS, DOM, i18n)
 ├── icons/                # Extension aperture icons (16, 32, 48, 128 px)

@@ -135,7 +135,9 @@ class DomAndI18nTests(unittest.TestCase):
             'txt-preset-bw',
             'txt-opt-shorts',
             'txt-opt-hover',
-            'btn-options'
+            'btn-options',
+            'btn-donate',
+            'txt-donate'
         ]
         for el_id in required_ids:
             self.assertIn(f'id="{el_id}"', html, f"Element #{el_id} missing in popup.html")
@@ -165,6 +167,9 @@ class DomAndI18nTests(unittest.TestCase):
             'opt-lang-en-desc',
             'opt-sync-title',
             'opt-sync-desc',
+            'opt-support-title',
+            'opt-support-desc',
+            'opt-support-btn',
             'save-status'
         ]
         for el_id in required_ids:
@@ -175,6 +180,38 @@ class DomAndI18nTests(unittest.TestCase):
         ru_keys = set(re.findall(r'(\w+):\s*"[^"]+"', js[js.find('ru: {'):js.find('en: {')]))
         en_keys = set(re.findall(r'(\w+):\s*"[^"]+"', js[js.find('en: {'):js.find('const radios')]))
         self.assertEqual(ru_keys, en_keys, "Options i18n RU and EN dictionaries must have identical keys")
+
+    def test_donate_dom_ids_and_i18n(self):
+        donate_html_path = os.path.join(PROJECT_ROOT, 'donate', 'donate.html')
+        donate_js_path = os.path.join(PROJECT_ROOT, 'donate', 'donate.js')
+
+        self.assertTrue(os.path.isfile(donate_html_path), "donate.html must exist")
+        self.assertTrue(os.path.isfile(donate_js_path), "donate.js must exist")
+
+        with open(donate_html_path, 'r', encoding='utf-8') as f:
+            html = f.read()
+        with open(donate_js_path, 'r', encoding='utf-8') as f:
+            js = f.read()
+
+        required_ids = [
+            'txt-donate-title',
+            'txt-donate-intro',
+            'txt-section-fiat',
+            'txt-da-methods',
+            'txt-da-btn',
+            'txt-section-crypto',
+            'txt-crypto-sub',
+            'txt-footer-note',
+            'wallet-list',
+            'link-da'
+        ]
+        for el_id in required_ids:
+            self.assertIn(f'id="{el_id}"', html, f"Element #{el_id} missing in donate.html")
+
+        # Check i18n parity
+        ru_keys = set(re.findall(r'(\w+):\s*"[^"]+"', js[js.find('ru: {'):js.find('en: {')]))
+        en_keys = set(re.findall(r'(\w+):\s*"[^"]+"', js[js.find('en: {'):js.find('const titleEl')]))
+        self.assertEqual(ru_keys, en_keys, "Donate i18n RU and EN dictionaries must have identical keys")
 
 
 class DocumentationAndAgentsTests(unittest.TestCase):
@@ -240,6 +277,9 @@ class PackagingTests(unittest.TestCase):
             self.assertIn('popup/popup.js', namelist)
             self.assertIn('options/options.html', namelist)
             self.assertIn('options/options.js', namelist)
+            self.assertIn('donate/donate.html', namelist)
+            self.assertIn('donate/donate.css', namelist)
+            self.assertIn('donate/donate.js', namelist)
 
 
 if __name__ == '__main__':

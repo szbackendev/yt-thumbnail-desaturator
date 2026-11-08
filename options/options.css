@@ -147,6 +147,37 @@ body {
   color: var(--text-muted);
 }
 
+/* Support Button */
+.btn-support {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+  padding: 8px 14px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 120ms var(--ease-out);
+}
+
+.btn-support:hover {
+  background-color: var(--bg-hover);
+  border-color: rgba(224, 36, 36, 0.4);
+  color: #ff6b7d;
+}
+
+.btn-support svg {
+  stroke: var(--text-muted);
+  transition: stroke 120ms var(--ease-out);
+}
+
+.btn-support:hover svg {
+  stroke: #ff6b7d;
+}
+
 /* Footer / status */
 .footer {
   display: flex;

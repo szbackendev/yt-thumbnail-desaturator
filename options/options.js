@@ -18,6 +18,9 @@
       langEnDesc: "Английский",
       syncTitle: "Синхронизация",
       syncDesc: "Настройки сохраняются в профиле и синхронизируются через аккаунт браузера.",
+      supportTitle: "Поддержать проект",
+      supportDesc: "Если вам нравится расширение, вы можете поддержать автора любой суммой.",
+      supportBtn: "Страница донатов (Карты, СБП, Криптовалюта) →",
       saved: "Сохранено"
     },
     en: {
@@ -31,6 +34,9 @@
       langEnDesc: "English",
       syncTitle: "Cloud Synchronization",
       syncDesc: "Settings are stored in your profile and synced across devices via browser account.",
+      supportTitle: "Support Project",
+      supportDesc: "If you enjoy this extension, consider supporting the developer with a tip.",
+      supportBtn: "Donation page (Cards, Crypto, DonationAlerts) →",
       saved: "Saved"
     }
   };
@@ -45,6 +51,9 @@
   const langEnDescEl = document.getElementById('opt-lang-en-desc');
   const syncTitleEl = document.getElementById('opt-sync-title');
   const syncDescEl = document.getElementById('opt-sync-desc');
+  const supportTitleEl = document.getElementById('opt-support-title');
+  const supportDescEl = document.getElementById('opt-support-desc');
+  const supportBtnEl = document.getElementById('opt-support-btn');
   const statusEl = document.getElementById('save-status');
 
   function getEffectiveLang(langSetting) {
@@ -71,6 +80,9 @@
     if (langEnDescEl) langEnDescEl.textContent = strings.langEnDesc;
     if (syncTitleEl) syncTitleEl.textContent = strings.syncTitle;
     if (syncDescEl) syncDescEl.textContent = strings.syncDesc;
+    if (supportTitleEl) supportTitleEl.textContent = strings.supportTitle;
+    if (supportDescEl) supportDescEl.textContent = strings.supportDesc;
+    if (supportBtnEl) supportBtnEl.textContent = strings.supportBtn;
     if (statusEl) statusEl.textContent = strings.saved;
   }
 
