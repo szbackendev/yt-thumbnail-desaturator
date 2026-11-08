@@ -13,51 +13,27 @@
   const WALLETS = [
     {
       id: 'usdt-trc20',
-      name: 'USDT',
-      network: 'TRC-20 (TRON)',
-      badge: 'TRC-20',
+      name: 'USDT & TRON',
+      network: 'TRC-20 / TRX',
+      badge: 'TRC-20 & TRX',
       badgeClass: 'badge-trc20',
-      address: 'TYOUR_TRC20_USDT_WALLET_ADDRESS_HERE'
+      address: 'PASTE_YOUR_TRON_AND_USDT_TRC20_ADDRESS_HERE'
     },
     {
       id: 'usdt-erc20',
-      name: 'USDT',
-      network: 'ERC-20 (Ethereum)',
-      badge: 'ERC-20',
+      name: 'USDT & Ethereum',
+      network: 'ERC-20 / ETH',
+      badge: 'ERC-20 & ETH',
       badgeClass: 'badge-erc20',
-      address: '0xYOUR_ERC20_USDT_WALLET_ADDRESS_HERE'
+      address: 'PASTE_YOUR_ETH_AND_USDT_ERC20_ADDRESS_HERE'
     },
     {
-      id: 'eth',
-      name: 'Ethereum',
-      network: 'ETH / Arbitrum / Optimism / Base',
-      badge: 'ETH',
-      badgeClass: 'badge-erc20',
-      address: '0xYOUR_ETHEREUM_WALLET_ADDRESS_HERE'
-    },
-    {
-      id: 'trx',
-      name: 'TRON',
-      network: 'TRX',
-      badge: 'TRX',
-      badgeClass: 'badge-trc20',
-      address: 'TYOUR_TRON_TRX_WALLET_ADDRESS_HERE'
-    },
-    {
-      id: 'ton',
-      name: 'TON',
-      network: 'The Open Network',
-      badge: 'TON',
+      id: 'gram-ton',
+      name: 'GRAM',
+      network: 'The Open Network (ex. TON)',
+      badge: 'GRAM (ex. TON)',
       badgeClass: 'badge-ton',
-      address: 'EQYOUR_TON_WALLET_ADDRESS_HERE'
-    },
-    {
-      id: 'btc',
-      name: 'Bitcoin',
-      network: 'BTC',
-      badge: 'BTC',
-      badgeClass: 'badge-btc',
-      address: 'bc1qYOUR_BITCOIN_WALLET_ADDRESS_HERE'
+      address: 'PASTE_YOUR_GRAM_TON_ADDRESS_HERE'
     }
   ];
 
