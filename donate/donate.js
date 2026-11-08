@@ -17,7 +17,7 @@
       network: 'TRC-20 / TRX',
       badge: 'TRC-20 & TRX',
       badgeClass: 'badge-trc20',
-      address: 'PASTE_YOUR_TRON_AND_USDT_TRC20_ADDRESS_HERE'
+      address: 'TQpJpN5HtgiJdZJ6BUKzbaiVv1naM6avgh'
     },
     {
       id: 'usdt-erc20',
@@ -25,7 +25,7 @@
       network: 'ERC-20 / ETH',
       badge: 'ERC-20 & ETH',
       badgeClass: 'badge-erc20',
-      address: 'PASTE_YOUR_ETH_AND_USDT_ERC20_ADDRESS_HERE'
+      address: '0x1ff96669F6a64a5e7F33252Daae087aF3846594c'
     },
     {
       id: 'gram-ton',
@@ -33,7 +33,7 @@
       network: 'The Open Network (ex. TON)',
       badge: 'GRAM (ex. TON)',
       badgeClass: 'badge-ton',
-      address: 'PASTE_YOUR_GRAM_TON_ADDRESS_HERE'
+      address: 'UQCXacS9QlFqQxvreTWErDs-bY-V8c6aCj3TkI6rVy4blZ3C'
     }
   ];
 
@@ -122,8 +122,8 @@
     if (!extApi || !extApi.storage) return;
     const payload = { language: lang };
     try {
-      if (extApi.storage.sync) extApi.storage.sync.set(payload, () => {});
-      if (extApi.storage.local) extApi.storage.local.set(payload, () => {});
+      if (extApi.storage.sync) extApi.storage.sync.set(payload, () => { });
+      if (extApi.storage.local) extApi.storage.local.set(payload, () => { });
     } catch (e) {
       console.warn('Failed to save language:', e);
     }
