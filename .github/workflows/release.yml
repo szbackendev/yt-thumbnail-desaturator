@@ -1,0 +1,53 @@
+name: Release Build & Artifacts
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run automated test suite
+        run: |
+          python -m unittest discover tests
+
+      - name: Package extension archive (.xpi)
+        run: |
+          python package.py
+
+      - name: Extract extension version
+        id: get_version
+        run: |
+          VERSION=$(python -c "import json; print(json.load(open('manifest.json'))['version'])")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current extension version: $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}"
+          name: "Release v${{ steps.get_version.outputs.VERSION }}"
+          body: |
+            Automated release build for **YouTube Thumbnail Desaturator** v${{ steps.get_version.outputs.VERSION }}.
+            
+            ### Artifacts:
+            - **`yt-thumbnail-desaturator.xpi`**: Ready-to-install package for Zen Browser and Mozilla Firefox.
+          files: |
+            yt-thumbnail-desaturator.xpi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

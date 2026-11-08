@@ -55,6 +55,7 @@
   const supportDescEl = document.getElementById('opt-support-desc');
   const supportBtnEl = document.getElementById('opt-support-btn');
   const statusEl = document.getElementById('save-status');
+  const verEl = document.getElementById('opt-version');
 
   function getEffectiveLang(langSetting) {
     if (langSetting === 'ru' || langSetting === 'en') {
@@ -181,6 +182,13 @@
   }
 
   function init() {
+    if (verEl) {
+      const manifestVer = (extApi && extApi.runtime && extApi.runtime.getManifest)
+        ? extApi.runtime.getManifest().version
+        : '1.0.0';
+      verEl.textContent = `v${manifestVer}`;
+    }
+
     readStorage({ language: 'auto' }, (res) => {
       const choice = res && res.language ? res.language : 'auto';
       radios.forEach((r) => {

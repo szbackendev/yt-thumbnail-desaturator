@@ -77,6 +77,7 @@
   const walletListEl = document.getElementById('wallet-list');
   const btnLangRu = document.getElementById('btn-lang-ru');
   const btnLangEn = document.getElementById('btn-lang-en');
+  const verEl = document.getElementById('donate-version');
 
   let currentLang = 'ru';
 
@@ -211,6 +212,13 @@
   }
 
   function init() {
+    if (verEl) {
+      const manifestVer = (extApi && extApi.runtime && extApi.runtime.getManifest)
+        ? extApi.runtime.getManifest().version
+        : '1.0.0';
+      verEl.textContent = `v${manifestVer}`;
+    }
+
     if (btnLangRu) {
       btnLangRu.addEventListener('click', () => saveLanguage('ru'));
     }

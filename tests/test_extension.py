@@ -170,7 +170,8 @@ class DomAndI18nTests(unittest.TestCase):
             'opt-support-title',
             'opt-support-desc',
             'opt-support-btn',
-            'save-status'
+            'save-status',
+            'opt-version'
         ]
         for el_id in required_ids:
             self.assertIn(f'id="{el_id}"', html, f"Element #{el_id} missing in options.html")
@@ -205,7 +206,8 @@ class DomAndI18nTests(unittest.TestCase):
             'wallet-list',
             'link-da',
             'btn-lang-ru',
-            'btn-lang-en'
+            'btn-lang-en',
+            'donate-version'
         ]
         for el_id in required_ids:
             self.assertIn(f'id="{el_id}"', html, f"Element #{el_id} missing in donate.html")
@@ -282,6 +284,14 @@ class PackagingTests(unittest.TestCase):
             self.assertIn('donate/donate.html', namelist)
             self.assertIn('donate/donate.css', namelist)
             self.assertIn('donate/donate.js', namelist)
+
+    def test_bump_version_logic(self):
+        import bump_version
+        self.assertEqual(bump_version.calculate_next_version('1.0.0', 'patch'), '1.0.1')
+        self.assertEqual(bump_version.calculate_next_version('1.0.9', 'patch'), '1.0.10')
+        self.assertEqual(bump_version.calculate_next_version('1.0.5', 'minor'), '1.1.0')
+        self.assertEqual(bump_version.calculate_next_version('1.4.2', 'major'), '2.0.0')
+        self.assertEqual(bump_version.calculate_next_version('1.0.0', '2.3.4'), '2.3.4')
 
 
 if __name__ == '__main__':
