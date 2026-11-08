@@ -203,7 +203,9 @@ class DomAndI18nTests(unittest.TestCase):
             'txt-crypto-sub',
             'txt-footer-note',
             'wallet-list',
-            'link-da'
+            'link-da',
+            'btn-lang-ru',
+            'btn-lang-en'
         ]
         for el_id in required_ids:
             self.assertIn(f'id="{el_id}"', html, f"Element #{el_id} missing in donate.html")

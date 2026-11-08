@@ -81,7 +81,7 @@
       intro: "This extension is 100% free and open-source. If it makes your YouTube experience calmer and reduces visual clickbait fatigue, feel free to support the developer with a tip:",
       sectionFiat: "Bank Cards & Online Payments",
       daMethods: "Cards (Visa, Mastercard, Mir), Fast Payments, ЮMoney",
-      daBtn: "Go to donation page →",
+      daBtn: "Proceed to donation →",
       sectionCrypto: "Cryptocurrency",
       cryptoSub: "Direct wallet transfer (0% third-party platform fee)",
       copyBtn: "Copy",
@@ -99,6 +99,8 @@
   const cryptoSubEl = document.getElementById('txt-crypto-sub');
   const footerNoteEl = document.getElementById('txt-footer-note');
   const walletListEl = document.getElementById('wallet-list');
+  const btnLangRu = document.getElementById('btn-lang-ru');
+  const btnLangEn = document.getElementById('btn-lang-en');
 
   let currentLang = 'ru';
 
@@ -116,6 +118,7 @@
     currentLang = getEffectiveLang(langChoice);
     const strings = I18N[currentLang] || I18N.en;
 
+    document.documentElement.lang = currentLang;
     document.title = strings.pageTitle;
     if (titleEl) titleEl.textContent = strings.headerTitle;
     if (introEl) introEl.textContent = strings.intro;
@@ -126,7 +129,28 @@
     if (cryptoSubEl) cryptoSubEl.textContent = strings.cryptoSub;
     if (footerNoteEl) footerNoteEl.textContent = strings.footerNote;
 
+    if (btnLangRu) {
+      if (currentLang === 'ru') btnLangRu.classList.add('active');
+      else btnLangRu.classList.remove('active');
+    }
+    if (btnLangEn) {
+      if (currentLang === 'en') btnLangEn.classList.add('active');
+      else btnLangEn.classList.remove('active');
+    }
+
     renderWallets();
+  }
+
+  function saveLanguage(lang) {
+    applyLanguage(lang);
+    if (!extApi || !extApi.storage) return;
+    const payload = { language: lang };
+    try {
+      if (extApi.storage.sync) extApi.storage.sync.set(payload, () => {});
+      if (extApi.storage.local) extApi.storage.local.set(payload, () => {});
+    } catch (e) {
+      console.warn('Failed to save language:', e);
+    }
   }
 
   function copyText(text, btnElement, strings) {
@@ -211,6 +235,13 @@
   }
 
   function init() {
+    if (btnLangRu) {
+      btnLangRu.addEventListener('click', () => saveLanguage('ru'));
+    }
+    if (btnLangEn) {
+      btnLangEn.addEventListener('click', () => saveLanguage('en'));
+    }
+
     if (!extApi || !extApi.storage) {
       applyLanguage('auto');
       return;
@@ -228,6 +259,16 @@
       }
     } catch {
       applyLanguage('auto');
+    }
+
+    if (extApi.storage.onChanged) {
+      extApi.storage.onChanged.addListener((changes, areaName) => {
+        if (areaName === 'sync' || areaName === 'local') {
+          if (changes.language && changes.language.newValue) {
+            applyLanguage(changes.language.newValue);
+          }
+        }
+      });
     }
   }
 
