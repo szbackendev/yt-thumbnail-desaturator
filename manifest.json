@@ -1,12 +1,17 @@
 {
   "manifest_version": 3,
   "name": "YouTube Thumbnail Desaturator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Настраиваемое уменьшение насыщенности превью видео и Shorts на YouTube для снижения визуального шума и кликбейта.",
   "browser_specific_settings": {
     "gecko": {
       "id": "yt-thumb-desaturator@zen.browser",
-      "strict_min_version": "109.0"
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
     }
   },
   "permissions": [
@@ -44,10 +49,10 @@
         "content/content.css"
       ],
       "js": [
+        "shared/settings.js",
         "content/content.js"
       ],
       "run_at": "document_start"
     }
   ]
 }
-

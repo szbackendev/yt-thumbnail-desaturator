@@ -18,7 +18,7 @@
         </svg>
         <div class="brand-text">
           <h1 id="opt-page-title">Параметры расширения</h1>
-          <span class="version">YouTube Thumbnail Saturation</span>
+          <span class="version" id="opt-version">v1.0.0</span>
         </div>
       </div>
     </header>
@@ -32,7 +32,7 @@
         <p id="opt-lang-desc">Выберите язык для всплывающего окна и настроек расширения.</p>
       </div>
 
-      <div class="lang-selector" role="radiogroup" aria-label="Язык интерфейса">
+      <div class="lang-selector" role="radiogroup" aria-labelledby="opt-lang-title">
         <label class="lang-option">
           <input type="radio" name="lang" value="auto" checked>
           <div class="lang-box">
@@ -45,7 +45,7 @@
           <input type="radio" name="lang" value="ru">
           <div class="lang-box">
             <span class="lang-name">Русский</span>
-            <span class="lang-sub">Russian</span>
+            <span class="lang-sub" id="opt-lang-ru-desc">Русский язык</span>
           </div>
         </label>
 
@@ -53,7 +53,7 @@
           <input type="radio" name="lang" value="en">
           <div class="lang-box">
             <span class="lang-name">English</span>
-            <span class="lang-sub">Английский</span>
+            <span class="lang-sub" id="opt-lang-en-desc">Английский</span>
           </div>
         </label>
       </div>
@@ -69,12 +69,31 @@
       </div>
     </section>
 
+    <div class="hairline"></div>
+
+    <!-- Support Section -->
+    <section class="section">
+      <div class="section-info">
+        <h2 id="opt-support-title">Поддержать проект</h2>
+        <p id="opt-support-desc">Если вам нравится расширение, вы можете поддержать автора любой суммой.</p>
+      </div>
+      <div>
+        <a href="../donate/donate.html" target="_blank" rel="noopener noreferrer" class="btn-support" id="link-support-page">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span id="opt-support-btn">Страница донатов (Карты, СБП, Криптовалюта) →</span>
+        </a>
+      </div>
+    </section>
+
     <!-- Save Indicator -->
     <footer class="footer">
-      <span class="save-status" id="save-status">Параметры сохранены</span>
+      <span class="save-status" id="save-status" role="status" aria-live="polite"></span>
     </footer>
   </div>
 
+  <script src="../shared/settings.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

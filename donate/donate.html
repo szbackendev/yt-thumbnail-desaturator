@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поддержать проект — YouTube Thumbnail Desaturator</title>
+  <link rel="stylesheet" href="donate.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <svg class="icon" width="22" height="22" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8 1.5A6.5 6.5 0 0 0 8 14.5V1.5Z" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M8 1.5A6.5 6.5 0 0 1 8 14.5V1.5Z" fill="#e02424"/>
+        </svg>
+        <div class="brand-text">
+          <h1 id="txt-donate-title">Поддержать разработку</h1>
+          <span class="version" id="donate-version">v1.0.0</span>
+        </div>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Language selector">
+        <button type="button" class="lang-btn" id="btn-lang-ru" data-lang="ru">RU</button>
+        <button type="button" class="lang-btn" id="btn-lang-en" data-lang="en">EN</button>
+      </div>
+    </header>
+
+    <div class="hairline"></div>
+
+    <!-- Intro message -->
+    <p class="intro-text" id="txt-donate-intro">
+      Расширение является бесплатным и с открытым исходным кодом. Если оно делает просмотр YouTube комфортнее и помогает снизить визуальный шум, вы можете поддержать автора любой суммой:
+    </p>
+
+    <!-- DonationAlerts Card -->
+    <section class="section">
+      <h2 class="section-title" id="txt-section-fiat">Банковские карты и СБП</h2>
+      <a href="https://www.donationalerts.com/r/szbackendev" target="_blank" rel="noopener noreferrer" class="da-card" id="link-da">
+        <div class="da-info">
+          <div class="da-badge">DonationAlerts</div>
+          <div class="da-methods" id="txt-da-methods">Банковские карты (МИР, Visa, Mastercard), СБП, ЮMoney</div>
+        </div>
+        <div class="da-action">
+          <span class="btn-primary" id="txt-da-btn">Перейти к донату →</span>
+        </div>
+      </a>
+    </section>
+
+    <div class="hairline"></div>
+
+    <!-- Crypto Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title" id="txt-section-crypto">Криптовалюта</h2>
+        <span class="section-sub" id="txt-crypto-sub">Прямой перевод; возможны комиссии сети и сервиса отправки</span>
+      </div>
+
+      <div class="wallet-list" id="wallet-list">
+        <!-- Rendered dynamically by donate.js -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-note" id="txt-footer-note">Спасибо за поддержку свободного программного обеспечения!</span>
+    </footer>
+  </div>
+
+  <script src="../shared/settings.js"></script>
+  <script src="donate.js"></script>
+</body>
+</html>
+

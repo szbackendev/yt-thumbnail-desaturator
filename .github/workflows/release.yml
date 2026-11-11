@@ -1,0 +1,65 @@
+name: Release Build & Artifacts
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify release tag and stable branch
+        run: |
+          VERSION=$(python -c "import json; print(json.load(open('manifest.json'))['version'])")
+          test "$GITHUB_REF_NAME" = "v$VERSION"
+          git merge-base --is-ancestor HEAD origin/main
+
+      - name: Run automated test suite
+        run: |
+          python -m unittest discover tests
+
+      - name: Package extension archive (.xpi)
+        run: |
+          python package.py
+
+      - name: Extract extension version
+        id: get_version
+        run: |
+          VERSION=$(python -c "import json; print(json.load(open('manifest.json'))['version'])")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current extension version: $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}"
+          name: "Release v${{ steps.get_version.outputs.VERSION }}"
+          body: |
+            Automated release build for **YouTube Thumbnail Desaturator** v${{ steps.get_version.outputs.VERSION }}.
+            
+            ### Artifacts:
+            - **`yt-thumbnail-desaturator.xpi`**: Unsigned development package. Temporary loading via `about:debugging` is supported; permanent installation in standard Firefox requires Mozilla signing.
+          files: |
+            yt-thumbnail-desaturator.xpi
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
