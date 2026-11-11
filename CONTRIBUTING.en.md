@@ -58,7 +58,7 @@ Record the browser version and scope; one successful profile check does not vali
 
 ## Preparing a release
 
-A new Mozilla submission must exceed previously submitted versions. Keep the Gecko ID unchanged.
+A new version must exceed the current version. Keep the Gecko ID unchanged.
 
 ```powershell
 python bump_version.py patch
@@ -68,13 +68,4 @@ This runs only on `dev`, executes tests and rebuilds the XPI. Failure restores t
 
 Before committing, inspect the diff, stage specific changed files and the rebuilt XPI, then push `origin dev`. Open a PR to `main`, wait for CI and complete manual checks. A clean clone must pass tests and build an archive matching its source.
 
-A GitHub Release is triggered separately by pushing a `v<version>` tag matching the manifest and pointing to a commit in `main`. The workflow does not upload to Mozilla.
-
-## Mozilla submission — maintainers only
-
-1. Open the existing add-on in [Developer Hub](https://addons.mozilla.org/developers/) and add a new version.
-2. Upload the XPI from the verified `main` commit; supply release notes and validator answers.
-3. Code is not minified and needs no compilation. If source is requested, provide the matching commit and `python package.py` command.
-4. Mozilla controls signing, review and update availability. Local tests and GitHub CI do not mean the new version has been approved.
-
-Do not replace a version's package after submission: subsequent changes need a new version. See the [official Mozilla submission documentation](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/).
+A GitHub Release is triggered separately by pushing a `v<version>` tag matching the manifest and pointing to a commit in `main`.
