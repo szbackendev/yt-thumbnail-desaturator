@@ -2,9 +2,9 @@
 
 ## Public documentation revision for 1.0.1 (2026-11-11)
 
-- README RU/EN are now matching 66-line user guides: product, store/source installation, usage, privacy and support. Build and publication procedures are retained in separate CONTRIBUTING RU/EN guides.
+- README RU/EN are matching 66-line user guides: product, store/source installation, usage, privacy and support. CONTRIBUTING RU/EN cover development, testing and packaging; external store publication instructions are not part of the public documentation.
 - The store URL, author and Gecko ID were matched through the public Mozilla Add-ons API. Fetching the store HTML returned a client challenge; a store installation was not independently repeated.
-- Manifest and runtime assets are unchanged. Version 1.0.1 had not been submitted, so its XPI was rebuilt with the revised READMEs before submission.
+- Manifest and runtime assets are unchanged. The 1.0.1 XPI was rebuilt with the revised READMEs.
 - Full local suite: 41 Python tests passed with both Chromium checks enabled and the 52-scenario Node wrapper. Documentation tests enforce user/maintainer separation, bilingual structure, installation links and guide command parity.
 - Updated 19-entry unsigned XPI has valid ZIP integrity and exact source parity. SHA-256: `121f5adfb47e621d0df330a17ae05714e68602851823f4131e3ed8996795b716`.
 
@@ -14,7 +14,7 @@ The earlier evidence below refers to the preceding archive and documentation rev
 
 - The browser operator reported all six documented live checks passed. Browser version and an independent recording were not supplied; this is operator-reported acceptance, not a claim of universal Gecko compatibility.
 - Release preparation changes documentation, version metadata, build tooling and tests. All 12 content/shared/popup/options/donate assets are unchanged relative to tested `dev` commit `400485c`, after normalizing line endings.
-- README RU/EN now describe installation, Mozilla submission, storage limitations, permissions and bounded compatibility consistently. No source-code license has been selected; repository visibility is not a license grant.
+- The earlier README RU/EN revision described installation, storage limitations, permissions and bounded compatibility consistently. No source-code license had been selected in the repository; visibility is not a license grant.
 - Added documentation parity/link/limit tests and build regressions for canonical LF output, unchanged locked archives and explicit incomplete-rollback reporting.
 - Full local suite: 39 Python tests passed without skips, including both opt-in Chromium checks and the 52-scenario Node runtime wrapper.
 - Windows lock evidence: replacing the old XPI failed while Restart Manager identified four Zen processes using it. Its original bytes were unchanged; a later non-mutating replace-access probe succeeded before the version bump was retried.

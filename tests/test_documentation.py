@@ -55,7 +55,7 @@ class DocumentationTests(unittest.TestCase):
                 with self.subTest(forbidden=forbidden):
                     self.assertNotIn(forbidden, text)
 
-    def test_maintainer_guides_retain_build_and_submission_instructions(self):
+    def test_contributor_guides_retain_build_instructions(self):
         guides = []
         for name in ['CONTRIBUTING.md', 'CONTRIBUTING.en.md']:
             with self.subTest(guide=name):
@@ -65,7 +65,7 @@ class DocumentationTests(unittest.TestCase):
                 guides.append(text)
                 for required in ['python -m unittest discover tests -v',
                                  'python package.py', 'python bump_version.py patch',
-                                 'Developer Hub', 'THUMBNAIL_TEST_BROWSER',
+                                 'THUMBNAIL_TEST_BROWSER',
                                  'yt-thumb-desaturator@zen.browser', 'storage.sync',
                                  'storage.local', 'AGENTS.md']:
                     self.assertIn(required, text)
@@ -73,3 +73,17 @@ class DocumentationTests(unittest.TestCase):
         self.assertEqual(len(guides), 2)
         self.assertEqual(re.findall(r'```powershell\n(.*?)```', guides[0], re.S),
                          re.findall(r'```powershell\n(.*?)```', guides[1], re.S))
+
+    def test_public_documentation_has_no_mozilla_submission_guide(self):
+        names = ['README.md', 'README.en.md', 'CONTRIBUTING.md',
+                 'CONTRIBUTING.en.md', 'REVIEW.md']
+        forbidden = ['Developer Hub', 'addons.mozilla.org/developers',
+                     'submitting-an-add-on', 'Mozilla submission',
+                     'Отправка в Mozilla', 'отправка в Mozilla',
+                     'Загрузите XPI', 'Upload the XPI']
+        for name in names:
+            text = (ROOT / name).read_text(encoding='utf-8')
+            for phrase in forbidden:
+                with self.subTest(document=name, phrase=phrase):
+                    self.assertTrue(phrase not in text,
+                                    f'{name} must not include owner-only publication instructions')
