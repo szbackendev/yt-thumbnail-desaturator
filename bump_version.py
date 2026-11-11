@@ -57,7 +57,7 @@ def calculate_next_version(current, mode='patch'):
 
 def update_manifest_version(new_version, manifest_data):
     manifest_data['version'] = new_version
-    with open(MANIFEST_PATH, 'w', encoding='utf-8') as f:
+    with open(MANIFEST_PATH, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(manifest_data, f, indent=2, ensure_ascii=False)
         f.write('\n')
     print(f"Updated manifest.json: version -> {new_version}")
@@ -93,11 +93,18 @@ def main():
         if pkg_res.returncode != 0:
             raise RuntimeError('Package build failed')
     except (OSError, RuntimeError, KeyboardInterrupt) as error:
-        manifest_path.write_bytes(original_manifest)
-        if original_archive is None:
-            archive_path.unlink(missing_ok=True)
-        else:
-            archive_path.write_bytes(original_archive)
+        rollback_errors = []
+        for path, original in [(manifest_path, original_manifest), (archive_path, original_archive)]:
+            try:
+                if original is None:
+                    path.unlink(missing_ok=True)
+                elif not path.exists() or path.read_bytes() != original:
+                    path.write_bytes(original)
+            except OSError as rollback_error:
+                rollback_errors.append(f'{path}: {rollback_error}')
+        if rollback_errors:
+            print(f'Error: {error}. Rollback incomplete: ' + '; '.join(rollback_errors), file=sys.stderr)
+            return 1
         print(f'Error: {error}. Previous manifest and archive restored.', file=sys.stderr)
         return 1
 

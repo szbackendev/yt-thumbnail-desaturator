@@ -1,0 +1,4 @@
+# Canonical source bytes on Windows and Linux for reproducible XPI builds.
+* text=auto eol=lf
+*.png binary
+*.xpi binary

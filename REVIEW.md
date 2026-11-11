@@ -1,5 +1,20 @@
 # Release readiness review
 
+## Version 1.0.1 promotion evidence (2026-11-11)
+
+- The browser operator reported all six documented live checks passed. Browser version and an independent recording were not supplied; this is operator-reported acceptance, not a claim of universal Gecko compatibility.
+- Release preparation changes documentation, version metadata, build tooling and tests. All 12 content/shared/popup/options/donate assets are unchanged relative to tested `dev` commit `400485c`, after normalizing line endings.
+- README RU/EN now describe installation, Mozilla submission, storage limitations, permissions and bounded compatibility consistently. No source-code license has been selected; repository visibility is not a license grant.
+- Added documentation parity/link/limit tests and build regressions for canonical LF output, unchanged locked archives and explicit incomplete-rollback reporting.
+- Full local suite: 39 Python tests passed without skips, including both opt-in Chromium checks and the 52-scenario Node runtime wrapper.
+- Windows lock evidence: replacing the old XPI failed while Restart Manager identified four Zen processes using it. Its original bytes were unchanged; a later non-mutating replace-access probe succeeded before the version bump was retried.
+- `python bump_version.py patch` succeeded: manifest `1.0.1`, 19-entry unsigned XPI, valid ZIP integrity and exact source-byte parity.
+- XPI SHA-256: `38606954379a91fc6c36d7f6e91ab4244c7556a5f9e26320dcd1182b5da6280a`.
+- `.gitattributes` fixes LF checkout bytes on Windows and Linux. Main promotion requires clean-checkout verification and successful hosted CI on the PR; no direct main push, force-push or branch deletion is part of the release procedure.
+- Mozilla validation/signing of 1.0.1 remains separate. Only 1.0.0 approval was reported; no 1.0.1 submission or approval is claimed here.
+
+The sections below retain the earlier engineering review as historical evidence. Its version, archive hash and pending gates describe the pre-promotion state.
+
 ## Scope and evidence
 
 - Baseline: local `main` at `afed789`; development HEAD: `cade473` on `dev`, plus the reviewed working-tree changes.

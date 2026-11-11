@@ -13,6 +13,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ReleaseToolTests(unittest.TestCase):
+    def test_packaged_text_has_canonical_lf_line_endings(self):
+        import package
+        for name in package.FILES_TO_PACK:
+            if name.endswith('.png'):
+                continue
+            with self.subTest(asset=name):
+                self.assertTrue(b'\r' not in (ROOT / name).read_bytes(),
+                                'Text assets must use LF for cross-platform package parity')
+
+    def test_version_writer_preserves_canonical_lf_line_endings(self):
+        import bump_version
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = Path(directory) / 'manifest.json'
+            with patch.object(bump_version, 'MANIFEST_PATH', str(manifest)), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                bump_version.update_manifest_version('1.0.1', {'version': '1.0.0'})
+            data = manifest.read_bytes()
+            self.assertTrue(b'\r' not in data, 'Version writer must not emit CRLF')
+            self.assertTrue(data.endswith(b'\n'))
+
     def test_packager_works_outside_repository_and_accepts_output(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / 'extension.xpi'
@@ -82,6 +102,50 @@ class ReleaseToolTests(unittest.TestCase):
     def test_release_guidance_does_not_push_directly_to_main(self):
         source = (ROOT / 'bump_version.py').read_text(encoding='utf-8')
         self.assertNotIn('git push origin main', source)
+
+    def test_failed_package_does_not_rewrite_unchanged_locked_archive(self):
+        self.check_locked_archive_rollback(changed=False)
+
+    def test_incomplete_rollback_reports_locked_archive_without_traceback(self):
+        self.check_locked_archive_rollback(changed=True)
+
+    def check_locked_archive_rollback(self, changed):
+        import bump_version
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = Path(directory) / 'manifest.json'
+            archive = Path(directory) / 'yt-thumbnail-desaturator.xpi'
+            original = b'{"version":"1.0.0"}\n'
+            manifest.write_bytes(original)
+            archive.write_bytes(b'previous release')
+            write_bytes = Path.write_bytes
+
+            def write(path, data):
+                if path == archive:
+                    raise PermissionError('Archive is locked by browser')
+                return write_bytes(path, data)
+
+            def run(command, **kwargs):
+                if command[0] == 'git':
+                    return subprocess.CompletedProcess(command, 0, stdout='dev\n')
+                if command[-1] == 'package.py':
+                    if changed:
+                        write_bytes(archive, b'partial build')
+                    return subprocess.CompletedProcess(command, 1)
+                return subprocess.CompletedProcess(command, 0)
+
+            errors = io.StringIO()
+            with patch.object(bump_version, 'PROJECT_ROOT', directory), \
+                 patch.object(bump_version, 'MANIFEST_PATH', str(manifest)), \
+                 patch.object(sys, 'argv', ['bump_version.py', 'patch']), \
+                 patch.object(bump_version.subprocess, 'run', side_effect=run), \
+                 patch.object(Path, 'write_bytes', write), \
+                 contextlib.redirect_stdout(io.StringIO()), \
+                 contextlib.redirect_stderr(errors):
+                result = bump_version.main()
+            self.assertEqual(result, 1)
+            self.assertEqual(manifest.read_bytes(), original)
+            self.assertEqual(archive.read_bytes(), b'partial build' if changed else b'previous release')
+            self.assertIn('Rollback incomplete' if changed else 'restored', errors.getvalue())
 
     def test_version_bump_refuses_main_before_editing_files(self):
         import bump_version
