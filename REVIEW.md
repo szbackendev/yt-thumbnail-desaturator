@@ -1,5 +1,15 @@
 # Release readiness review
 
+## Public documentation revision for 1.0.1 (2026-11-11)
+
+- README RU/EN are now matching 66-line user guides: product, store/source installation, usage, privacy and support. Build and publication procedures are retained in separate CONTRIBUTING RU/EN guides.
+- The store URL, author and Gecko ID were matched through the public Mozilla Add-ons API. Fetching the store HTML returned a client challenge; a store installation was not independently repeated.
+- Manifest and runtime assets are unchanged. Version 1.0.1 had not been submitted, so its XPI was rebuilt with the revised READMEs before submission.
+- Full local suite: 41 Python tests passed with both Chromium checks enabled and the 52-scenario Node wrapper. Documentation tests enforce user/maintainer separation, bilingual structure, installation links and guide command parity.
+- Updated 19-entry unsigned XPI has valid ZIP integrity and exact source parity. SHA-256: `121f5adfb47e621d0df330a17ae05714e68602851823f4131e3ed8996795b716`.
+
+The earlier evidence below refers to the preceding archive and documentation revision.
+
 ## Version 1.0.1 promotion evidence (2026-11-11)
 
 - The browser operator reported all six documented live checks passed. Browser version and an independent recording were not supplied; this is operator-reported acceptance, not a claim of universal Gecko compatibility.
