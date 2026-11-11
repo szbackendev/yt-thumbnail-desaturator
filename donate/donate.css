@@ -104,6 +104,12 @@ body {
   color: #ffffff;
 }
 
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent-yt);
+  outline-offset: 3px;
+}
+
 .hairline {
   height: 1px;
   background-color: var(--border-hairline);
@@ -330,5 +336,11 @@ body {
   font-size: 11.5px;
   color: var(--text-muted);
   text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+  }
 }
 

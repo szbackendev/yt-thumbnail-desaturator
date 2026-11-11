@@ -4,7 +4,8 @@
 (function () {
   'use strict';
 
-  const extApi = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
+  const settingsApi = YtThumbnailSettings;
+  const extApi = settingsApi.api;
 
   const I18N = {
     ru: {
@@ -21,23 +22,27 @@
       supportTitle: "Поддержать проект",
       supportDesc: "Если вам нравится расширение, вы можете поддержать автора любой суммой.",
       supportBtn: "Страница донатов (Карты, СБП, Криптовалюта) →",
-      saved: "Сохранено"
+      saved: "Сохранено",
+      savedLocal: "Сохранено локально; синхронизация недоступна",
+      saveFailed: "Не удалось сохранить настройки"
     },
     en: {
-      pageTitle: "Extension Settings",
+      pageTitle: "Extension settings",
       docTitle: "Settings — YouTube Thumbnail Saturation",
-      langTitle: "Interface Language",
+      langTitle: "Interface language",
       langDesc: "Choose language for popup window and extension settings.",
-      langAuto: "System (Auto)",
+      langAuto: "System (auto)",
       langAutoDesc: "Follow browser",
       langRuDesc: "Russian",
       langEnDesc: "English",
-      syncTitle: "Cloud Synchronization",
+      syncTitle: "Cloud synchronization",
       syncDesc: "Settings are stored in your profile and synced across devices via browser account.",
-      supportTitle: "Support Project",
+      supportTitle: "Support project",
       supportDesc: "If you enjoy this extension, consider supporting the developer with a tip.",
       supportBtn: "Donation page (Cards, Crypto, DonationAlerts) →",
-      saved: "Saved"
+      saved: "Saved",
+      savedLocal: "Saved locally; sync unavailable",
+      saveFailed: "Could not save settings"
     }
   };
 
@@ -58,13 +63,7 @@
   const verEl = document.getElementById('opt-version');
 
   function getEffectiveLang(langSetting) {
-    if (langSetting === 'ru' || langSetting === 'en') {
-      return langSetting;
-    }
-    const uiLang = (extApi && extApi.i18n && typeof extApi.i18n.getUILanguage === 'function')
-      ? extApi.i18n.getUILanguage()
-      : (navigator.language || 'en');
-    return uiLang.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    return settingsApi.effectiveLanguage(langSetting);
   }
 
   function applyLanguage(langChoice) {
@@ -72,6 +71,7 @@
     const strings = I18N[lang] || I18N.en;
 
     document.title = strings.docTitle;
+    document.documentElement.lang = lang;
     if (titleEl) titleEl.textContent = strings.pageTitle;
     if (langTitleEl) langTitleEl.textContent = strings.langTitle;
     if (langDescEl) langDescEl.textContent = strings.langDesc;
@@ -84,101 +84,28 @@
     if (supportTitleEl) supportTitleEl.textContent = strings.supportTitle;
     if (supportDescEl) supportDescEl.textContent = strings.supportDesc;
     if (supportBtnEl) supportBtnEl.textContent = strings.supportBtn;
-    if (statusEl) statusEl.textContent = strings.saved;
   }
 
-  function safeSetStorage(area, data) {
-    if (!area) return;
+  let saveRevision = 0;
+  let statusTimer;
+  let updateSettings;
+
+  async function save(langValue) {
+    const revision = ++saveRevision;
+    updateSettings({ language: langValue });
+    const strings = I18N[getEffectiveLang(langValue)];
+    let message;
     try {
-      const res = area.set(data, () => {});
-      if (res && typeof res.catch === 'function') {
-        res.catch(() => {});
-      }
-    } catch (e) {
-      console.warn('[YT Saturation] Options set failed:', e);
-    }
-  }
-
-  function save(langValue) {
-    applyLanguage(langValue);
-
-    const payload = { language: langValue };
-
-    if (extApi && extApi.storage) {
-      safeSetStorage(extApi.storage.sync, payload);
-      safeSetStorage(extApi.storage.local, payload);
-    }
-
-    if (statusEl) {
-      statusEl.style.opacity = '1';
-      setTimeout(() => {
-        statusEl.style.opacity = '0.7';
-      }, 1500);
-    }
-  }
-
-  function readStorage(defaults, callback) {
-    if (!extApi || !extApi.storage) {
-      callback(defaults);
-      return;
-    }
-
-    const syncArea = extApi.storage.sync;
-    const localArea = extApi.storage.local;
-    const primary = syncArea || localArea;
-
-    let resolved = false;
-    const done = (data) => {
-      if (!resolved) {
-        resolved = true;
-        callback(data || defaults);
-      }
-    };
-
-    try {
-      const p = primary.get(defaults, (items) => {
-        if (extApi.runtime && extApi.runtime.lastError) {
-          if (localArea && primary !== localArea) {
-            try {
-              localArea.get(defaults, (localItems) => done(localItems || defaults));
-            } catch {
-              done(defaults);
-            }
-          } else {
-            done(defaults);
-          }
-        } else {
-          done(items);
-        }
-      });
-
-      if (p && typeof p.then === 'function') {
-        p.then((items) => {
-          if (items && Object.keys(items).length > 0) {
-            done(items);
-          } else if (localArea && primary !== localArea) {
-            localArea.get(defaults).then(done).catch(() => done(defaults));
-          } else {
-            done(defaults);
-          }
-        }).catch(() => {
-          if (localArea && primary !== localArea) {
-            try {
-              const lp = localArea.get(defaults, done);
-              if (lp && typeof lp.then === 'function') {
-                lp.then(done).catch(() => done(defaults));
-              }
-            } catch {
-              done(defaults);
-            }
-          } else {
-            done(defaults);
-          }
-        });
-      }
+      const result = await settingsApi.write({ language: langValue });
+      message = result.synced ? strings.saved : strings.savedLocal;
     } catch {
-      done(defaults);
+      message = strings.saveFailed;
     }
+    if (!statusEl || revision !== saveRevision) return;
+    statusEl.textContent = message;
+    statusEl.style.opacity = '1';
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => { statusEl.style.opacity = '0.7'; }, 1500);
   }
 
   function init() {
@@ -189,7 +116,7 @@
       verEl.textContent = `v${manifestVer}`;
     }
 
-    readStorage({ language: 'auto' }, (res) => {
+    updateSettings = settingsApi.observe((res) => {
       const choice = res && res.language ? res.language : 'auto';
       radios.forEach((r) => {
         r.checked = (r.value === choice);

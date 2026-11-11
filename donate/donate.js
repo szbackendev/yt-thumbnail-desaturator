@@ -4,11 +4,11 @@
 (function () {
   'use strict';
 
-  const extApi = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
+  const settingsApi = YtThumbnailSettings;
+  const extApi = settingsApi.api;
 
   /**
-   * Creator's Public Crypto Wallets
-   * Replace placeholder strings with actual public addresses.
+    * Public donation addresses. Never include private keys or seed phrases.
    */
   const WALLETS = [
     {
@@ -46,22 +46,24 @@
       daMethods: "Банковские карты (МИР, Visa, Mastercard), СБП, ЮMoney",
       daBtn: "Перейти к донату →",
       sectionCrypto: "Криптовалюта",
-      cryptoSub: "Прямой перевод на кошелёк (без сторонних комиссий)",
+      cryptoSub: "Прямой перевод; возможны комиссии сети и сервиса отправки",
       copyBtn: "Копировать",
       copiedBtn: "Скопировано! ✓",
+      copyFailed: "Не удалось скопировать",
       footerNote: "Спасибо за поддержку свободного программного обеспечения!"
     },
     en: {
-      pageTitle: "Support Project — YouTube Thumbnail Desaturator",
-      headerTitle: "Support Development",
+      pageTitle: "Support project — YouTube Thumbnail Desaturator",
+      headerTitle: "Support development",
       intro: "This extension is 100% free and open-source. If it makes your YouTube experience calmer and reduces visual clickbait fatigue, feel free to support the developer with a tip:",
-      sectionFiat: "Bank Cards & Online Payments",
+      sectionFiat: "Bank cards & online payments",
       daMethods: "Cards (Visa, Mastercard, Mir), Fast Payments, ЮMoney",
       daBtn: "Proceed to donation →",
       sectionCrypto: "Cryptocurrency",
-      cryptoSub: "Direct wallet transfer (0% third-party platform fee)",
+      cryptoSub: "Direct transfer; network and sending-service fees may apply",
       copyBtn: "Copy",
       copiedBtn: "Copied! ✓",
+      copyFailed: "Copy failed",
       footerNote: "Thank you for supporting open-source software!"
     }
   };
@@ -80,15 +82,10 @@
   const verEl = document.getElementById('donate-version');
 
   let currentLang = 'ru';
+  let updateSettings;
 
   function getEffectiveLang(langSetting) {
-    if (langSetting === 'ru' || langSetting === 'en') {
-      return langSetting;
-    }
-    const uiLang = (extApi && extApi.i18n && typeof extApi.i18n.getUILanguage === 'function')
-      ? extApi.i18n.getUILanguage()
-      : (navigator.language || 'en');
-    return uiLang.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    return settingsApi.effectiveLanguage(langSetting);
   }
 
   function applyLanguage(langChoice) {
@@ -107,10 +104,12 @@
     if (footerNoteEl) footerNoteEl.textContent = strings.footerNote;
 
     if (btnLangRu) {
+      btnLangRu.setAttribute('aria-pressed', String(currentLang === 'ru'));
       if (currentLang === 'ru') btnLangRu.classList.add('active');
       else btnLangRu.classList.remove('active');
     }
     if (btnLangEn) {
+      btnLangEn.setAttribute('aria-pressed', String(currentLang === 'en'));
       if (currentLang === 'en') btnLangEn.classList.add('active');
       else btnLangEn.classList.remove('active');
     }
@@ -119,15 +118,8 @@
   }
 
   function saveLanguage(lang) {
-    applyLanguage(lang);
-    if (!extApi || !extApi.storage) return;
-    const payload = { language: lang };
-    try {
-      if (extApi.storage.sync) extApi.storage.sync.set(payload, () => { });
-      if (extApi.storage.local) extApi.storage.local.set(payload, () => { });
-    } catch (e) {
-      console.warn('Failed to save language:', e);
-    }
+    updateSettings({ language: lang });
+    settingsApi.write({ language: lang }).catch((error) => console.warn('Failed to save language:', error));
   }
 
   function copyText(text, btnElement, strings) {
@@ -146,9 +138,10 @@
     document.body.appendChild(ta);
     ta.select();
     try {
-      document.execCommand('copy');
-      showCopied(btnElement, strings);
+      if (document.execCommand('copy')) showCopied(btnElement, strings);
+      else btnElement.textContent = strings.copyFailed;
     } catch (err) {
+      btnElement.textContent = strings.copyFailed;
       console.warn('Copy failed:', err);
     }
     document.body.removeChild(ta);
@@ -166,7 +159,7 @@
   function renderWallets() {
     if (!walletListEl) return;
     const strings = I18N[currentLang] || I18N.en;
-    walletListEl.innerHTML = '';
+    walletListEl.replaceChildren();
 
     WALLETS.forEach((wallet) => {
       const card = document.createElement('div');
@@ -199,6 +192,7 @@
       const copyBtn = document.createElement('button');
       copyBtn.type = 'button';
       copyBtn.className = 'btn-copy';
+      copyBtn.setAttribute('aria-live', 'polite');
       copyBtn.textContent = strings.copyBtn;
       copyBtn.addEventListener('click', () => {
         copyText(wallet.address, copyBtn, strings);
@@ -226,34 +220,7 @@
       btnLangEn.addEventListener('click', () => saveLanguage('en'));
     }
 
-    if (!extApi || !extApi.storage) {
-      applyLanguage('auto');
-      return;
-    }
-
-    const storage = extApi.storage.sync || extApi.storage.local;
-    try {
-      const res = storage.get({ language: 'auto' }, (items) => {
-        applyLanguage(items && items.language ? items.language : 'auto');
-      });
-      if (res && typeof res.then === 'function') {
-        res.then((items) => {
-          applyLanguage(items && items.language ? items.language : 'auto');
-        }).catch(() => applyLanguage('auto'));
-      }
-    } catch {
-      applyLanguage('auto');
-    }
-
-    if (extApi.storage.onChanged) {
-      extApi.storage.onChanged.addListener((changes, areaName) => {
-        if (areaName === 'sync' || areaName === 'local') {
-          if (changes.language && changes.language.newValue) {
-            applyLanguage(changes.language.newValue);
-          }
-        }
-      });
-    }
+    updateSettings = settingsApi.observe((settings) => applyLanguage(settings.language));
   }
 
   init();

@@ -4,7 +4,8 @@
 (function () {
   'use strict';
 
-  const extApi = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
+  const settingsApi = YtThumbnailSettings;
+  const extApi = settingsApi.api;
 
   const enabledToggle = document.getElementById('enabled-toggle');
   const saturationSlider = document.getElementById('saturation-slider');
@@ -20,6 +21,7 @@
     ru: {
       title: "Насыщенность YouTube",
       toggleTitle: "Включить или выключить",
+      saturationAria: "Процент насыщенности",
       optionsTitle: "Параметры",
       labelThumbnails: "Обложки видео",
       presetBw: "Ч/Б",
@@ -29,8 +31,9 @@
       donate: "Поддержать проект"
     },
     en: {
-      title: "YouTube Saturation",
+      title: "YouTube saturation",
       toggleTitle: "Enable or disable",
+      saturationAria: "Saturation percentage",
       optionsTitle: "Settings",
       labelThumbnails: "Video thumbnails",
       presetBw: "B&W",
@@ -52,13 +55,7 @@
   const txtDonate = document.getElementById('txt-donate');
 
   function getEffectiveLang(langSetting) {
-    if (langSetting === 'ru' || langSetting === 'en') {
-      return langSetting;
-    }
-    const uiLang = (extApi && extApi.i18n && typeof extApi.i18n.getUILanguage === 'function')
-      ? extApi.i18n.getUILanguage()
-      : (navigator.language || 'en');
-    return uiLang.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    return settingsApi.effectiveLanguage(langSetting);
   }
 
   function applyLanguage(langSetting) {
@@ -66,25 +63,25 @@
     const strings = I18N[lang] || I18N.en;
 
     document.title = strings.title;
+    document.documentElement.lang = lang;
+    if (enabledToggle) enabledToggle.setAttribute('aria-label', strings.toggleTitle);
+    if (saturationNum) saturationNum.setAttribute('aria-label', strings.saturationAria);
     if (txtTitle) txtTitle.textContent = strings.title;
     if (txtSwitchLabel) txtSwitchLabel.title = strings.toggleTitle;
     if (txtLabelThumbnails) txtLabelThumbnails.textContent = strings.labelThumbnails;
     if (txtPresetBw) txtPresetBw.textContent = strings.presetBw;
     if (txtOptShorts) txtOptShorts.textContent = strings.applyShorts;
     if (txtOptHover) txtOptHover.textContent = strings.hoverRestore;
-    if (btnOptions) btnOptions.title = strings.optionsTitle;
+    if (btnOptions) {
+      btnOptions.title = strings.optionsTitle;
+      btnOptions.setAttribute('aria-label', strings.optionsTitle);
+    }
     if (presetGroup) presetGroup.setAttribute('aria-label', strings.presetAria);
     if (txtDonate) txtDonate.textContent = strings.donate;
     if (btnDonate) btnDonate.title = strings.donate;
   }
 
-  const DEFAULT_SETTINGS = {
-    enabled: true,
-    saturation: 30,
-    applyShorts: true,
-    hoverRestore: true,
-    language: 'auto'
-  };
+  const DEFAULT_SETTINGS = settingsApi.defaults;
 
   let currentSettings = { ...DEFAULT_SETTINGS };
 
@@ -95,6 +92,9 @@
     }
 
     const isEnabled = settings.enabled !== false;
+    [saturationSlider, saturationNum, shortsToggle, hoverToggle, ...presetButtons].forEach((control) => {
+      if (control) control.disabled = !isEnabled;
+    });
     if (isEnabled) {
       if (controlsEl) controlsEl.classList.remove('disabled-state');
       if (optionsEl) optionsEl.classList.remove('disabled-state');
@@ -103,9 +103,7 @@
       if (optionsEl) optionsEl.classList.add('disabled-state');
     }
 
-    const sat = typeof settings.saturation === 'number'
-      ? Math.max(0, Math.min(100, settings.saturation))
-      : (parseInt(settings.saturation, 10) || DEFAULT_SETTINGS.saturation);
+    const sat = settingsApi.normalizeSaturation(settings.saturation);
 
     if (saturationSlider) {
       saturationSlider.value = sat;
@@ -117,6 +115,7 @@
 
     presetButtons.forEach((btn) => {
       const val = parseInt(btn.getAttribute('data-val'), 10);
+      btn.setAttribute('aria-pressed', String(val === sat));
       if (val === sat) {
         btn.classList.add('active');
       } else {
@@ -128,103 +127,26 @@
     if (hoverToggle) hoverToggle.checked = settings.hoverRestore !== false;
   }
 
-  function safeSetStorage(area, data) {
-    if (!area) return;
-    try {
-      const res = area.set(data, () => {
-        if (extApi && extApi.runtime && extApi.runtime.lastError) {
-          // ignore or log
-        }
-      });
-      if (res && typeof res.catch === 'function') {
-        res.catch(() => {});
-      }
-    } catch (e) {
-      console.warn('[YT Saturation] Storage set failed:', e);
-    }
-  }
+  const pendingEdits = {};
 
-  function saveSettings() {
-    if (!extApi || !extApi.storage) return;
-    // Dual-write: cloud sync + local cache
-    safeSetStorage(extApi.storage.sync, currentSettings);
-    safeSetStorage(extApi.storage.local, currentSettings);
+  function saveSettings(patch) {
+    Object.assign(pendingEdits, patch);
+    settingsApi.write(patch).catch((error) => console.warn('[YT Saturation] Save failed:', error));
   }
 
   function setSaturation(val) {
-    const clamped = Math.max(0, Math.min(100, isNaN(val) ? DEFAULT_SETTINGS.saturation : val));
+    const clamped = settingsApi.normalizeSaturation(val);
     currentSettings.saturation = clamped;
     updateVisuals(currentSettings);
-    saveSettings();
-  }
-
-  function readStorage(defaults, callback) {
-    if (!extApi || !extApi.storage) {
-      callback(defaults);
-      return;
-    }
-
-    const syncArea = extApi.storage.sync;
-    const localArea = extApi.storage.local;
-    const primary = syncArea || localArea;
-
-    let resolved = false;
-    const done = (data) => {
-      if (!resolved) {
-        resolved = true;
-        callback(data || defaults);
-      }
-    };
-
-    try {
-      const p = primary.get(defaults, (items) => {
-        if (extApi.runtime && extApi.runtime.lastError) {
-          if (localArea && primary !== localArea) {
-            try {
-              localArea.get(defaults, (localItems) => done(localItems || defaults));
-            } catch {
-              done(defaults);
-            }
-          } else {
-            done(defaults);
-          }
-        } else {
-          done(items);
-        }
-      });
-
-      if (p && typeof p.then === 'function') {
-        p.then((items) => {
-          if (items && Object.keys(items).length > 0) {
-            done(items);
-          } else if (localArea && primary !== localArea) {
-            localArea.get(defaults).then(done).catch(() => done(defaults));
-          } else {
-            done(defaults);
-          }
-        }).catch(() => {
-          if (localArea && primary !== localArea) {
-            try {
-              const lp = localArea.get(defaults, done);
-              if (lp && typeof lp.then === 'function') {
-                lp.then(done).catch(() => done(defaults));
-              }
-            } catch {
-              done(defaults);
-            }
-          } else {
-            done(defaults);
-          }
-        });
-      }
-    } catch {
-      done(defaults);
-    }
+    saveSettings({ saturation: clamped });
   }
 
   function init() {
-    readStorage(DEFAULT_SETTINGS, (stored) => {
-      currentSettings = { ...DEFAULT_SETTINGS, ...(stored || {}) };
+    settingsApi.observe((stored) => {
+      for (const key of Object.keys(pendingEdits)) {
+        if (stored[key] === pendingEdits[key]) delete pendingEdits[key];
+      }
+      currentSettings = { ...stored, ...pendingEdits };
       updateVisuals(currentSettings);
     });
   }
@@ -233,7 +155,7 @@
     enabledToggle.addEventListener('change', () => {
       currentSettings.enabled = enabledToggle.checked;
       updateVisuals(currentSettings);
-      saveSettings();
+      saveSettings({ enabled: currentSettings.enabled });
     });
   }
 
@@ -264,27 +186,14 @@
   if (shortsToggle) {
     shortsToggle.addEventListener('change', () => {
       currentSettings.applyShorts = shortsToggle.checked;
-      saveSettings();
+      saveSettings({ applyShorts: currentSettings.applyShorts });
     });
   }
 
   if (hoverToggle) {
     hoverToggle.addEventListener('change', () => {
       currentSettings.hoverRestore = hoverToggle.checked;
-      saveSettings();
-    });
-  }
-
-  if (extApi && extApi.storage && extApi.storage.onChanged) {
-    extApi.storage.onChanged.addListener((changes, areaName) => {
-      if (areaName === 'sync' || areaName === 'local') {
-        readStorage(DEFAULT_SETTINGS, (stored) => {
-          if (stored) {
-            currentSettings = { ...currentSettings, ...stored };
-            updateVisuals(currentSettings);
-          }
-        });
-      }
+      saveSettings({ hoverRestore: currentSettings.hoverRestore });
     });
   }
 

@@ -32,7 +32,7 @@
         <p id="opt-lang-desc">Выберите язык для всплывающего окна и настроек расширения.</p>
       </div>
 
-      <div class="lang-selector" role="radiogroup" aria-label="Язык интерфейса">
+      <div class="lang-selector" role="radiogroup" aria-labelledby="opt-lang-title">
         <label class="lang-option">
           <input type="radio" name="lang" value="auto" checked>
           <div class="lang-box">
@@ -78,7 +78,7 @@
         <p id="opt-support-desc">Если вам нравится расширение, вы можете поддержать автора любой суммой.</p>
       </div>
       <div>
-        <a href="../donate/donate.html" target="_blank" class="btn-support" id="link-support-page">
+        <a href="../donate/donate.html" target="_blank" rel="noopener noreferrer" class="btn-support" id="link-support-page">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
@@ -89,10 +89,11 @@
 
     <!-- Save Indicator -->
     <footer class="footer">
-      <span class="save-status" id="save-status">Параметры сохранены</span>
+      <span class="save-status" id="save-status" role="status" aria-live="polite"></span>
     </footer>
   </div>
 
+  <script src="../shared/settings.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

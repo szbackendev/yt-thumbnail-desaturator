@@ -24,17 +24,19 @@ html[data-yt-sat-enabled="true"] ytd-movie-renderer #thumbnail img,
 html[data-yt-sat-enabled="true"] ytd-notification-renderer img,
 html[data-yt-sat-enabled="true"] ytd-channel-video-player-renderer img,
 html[data-yt-sat-enabled="true"] ytd-channel-featured-content-renderer img,
-html[data-yt-sat-enabled="true"] .ytp-ce-covering-image,
-html[data-yt-sat-enabled="true"] .ytp-ce-expanding-image,
+html[data-yt-sat-enabled="true"] .ytp-ce-video .ytp-ce-covering-image,
+html[data-yt-sat-enabled="true"] .ytp-ce-video .ytp-ce-expanding-image,
 html[data-yt-sat-enabled="true"] .ytp-videowall-still-image,
 html[data-yt-sat-enabled="true"] ytd-miniplayer img,
-html[data-yt-sat-enabled="true"] yt-image img,
 html[data-yt-sat-enabled="true"] yt-lockup-view-model img,
 html[data-yt-sat-enabled="true"] yt-collection-thumbnail-view-model img,
 html[data-yt-sat-enabled="true"] ytd-thumbnail video,
-html[data-yt-sat-enabled="true"] ytd-moving-thumbnail-renderer,
-html[data-yt-sat-enabled="true"] ytd-video-preview,
-html[data-yt-sat-enabled="true"] yt-inline-player-view-model {
+html[data-yt-sat-enabled="true"] ytd-moving-thumbnail-renderer img,
+html[data-yt-sat-enabled="true"] ytd-moving-thumbnail-renderer video,
+html[data-yt-sat-enabled="true"] ytd-video-preview img,
+html[data-yt-sat-enabled="true"] ytd-video-preview video,
+html[data-yt-sat-enabled="true"] yt-inline-player-view-model img,
+html[data-yt-sat-enabled="true"] yt-inline-player-view-model video {
   filter: saturate(var(--yt-thumb-sat, 30%)) !important;
   transition: var(--yt-thumb-transition);
 }
@@ -43,7 +45,6 @@ html[data-yt-sat-enabled="true"] yt-inline-player-view-model {
    2. SHORTS THUMBNAILS (CAROUSELS, SHELVES, SEARCH, CHANNELS)
    ========================================================================== */
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-item-renderer img,
-html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-item-renderer yt-image,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-rich-shelf-renderer ytd-reel-item-renderer img,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-rich-grid-slim-media img,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] ytd-reel-shelf-renderer img,
@@ -57,7 +58,6 @@ html[data-yt-sat-enabled="true"][data-yt-sat-shorts="true"] [class*="shorts-lock
 
 /* Explicit override when Shorts desaturation is disabled */
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-item-renderer img,
-html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-item-renderer yt-image,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-rich-shelf-renderer ytd-reel-item-renderer img,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-rich-grid-slim-media img,
 html[data-yt-sat-enabled="true"][data-yt-sat-shorts="false"] ytd-reel-shelf-renderer img,
@@ -92,11 +92,16 @@ html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-playlist-video-re
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-reel-item-renderer:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-rich-grid-slim-media:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytm-shorts-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytm-shorts-lockup-view-model-v2:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-shorts-lockup-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] [class*="shorts-lockup"]:hover img,
 html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-thumbnail:hover video,
-html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-moving-thumbnail-renderer,
-html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-preview,
-html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view-model {
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-moving-thumbnail-renderer:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-moving-thumbnail-renderer:hover video,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-preview:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] ytd-video-preview:hover video,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view-model:hover img,
+html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view-model:hover video {
   filter: saturate(100%) !important;
 }
 
@@ -104,18 +109,21 @@ html[data-yt-sat-enabled="true"][data-yt-sat-hover="true"] yt-inline-player-view
    4. EXCLUSIONS (Channel Avatars, Channel Banners & Active Video Players)
    ========================================================================== */
 /* NEVER desaturate avatars/profile icons */
-html[data-yt-sat-enabled="true"] .ytSpecAvatarShapeImage,
-html[data-yt-sat-enabled="true"] yt-avatar-shape img,
-html[data-yt-sat-enabled="true"] #channel-thumbnail img,
-html[data-yt-sat-enabled="true"] #avatar img,
-html[data-yt-sat-enabled="true"] yt-img-shadow#avatar img,
-html[data-yt-sat-enabled="true"] ytd-channel-avatar-renderer img,
-html[data-yt-sat-enabled="true"] ytd-comment-view-model #author-thumbnail img,
-html[data-yt-sat-enabled="true"] yt-decorated-avatar-view-model img,
-html[data-yt-sat-enabled="true"] #avatar-btn img,
-html[data-yt-sat-enabled="true"] ytd-masthead yt-img-shadow img,
-html[data-yt-sat-enabled="true"] ytd-masthead yt-avatar-shape img,
-html[data-yt-sat-enabled="true"] ytd-topbar-menu-button-renderer img {
+/* Grouped ID specificity preserves exclusions even inside Shorts and hovered cards. */
+html:root[data-yt-sat-enabled="true"][data-yt-sat-shorts][data-yt-sat-hover] :is(
+  .ytSpecAvatarShapeImage,
+  yt-avatar-shape img,
+  #channel-thumbnail img,
+  #avatar img,
+  yt-img-shadow#avatar img,
+  ytd-channel-avatar-renderer img,
+  ytd-comment-view-model #author-thumbnail img,
+  yt-decorated-avatar-view-model img,
+  #avatar-btn img,
+  ytd-masthead yt-img-shadow img,
+  ytd-masthead yt-avatar-shape img,
+  ytd-topbar-menu-button-renderer img
+) {
   filter: none !important;
 }
 

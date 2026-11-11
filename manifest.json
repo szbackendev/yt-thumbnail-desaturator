@@ -49,6 +49,7 @@
         "content/content.css"
       ],
       "js": [
+        "shared/settings.js",
         "content/content.js"
       ],
       "run_at": "document_start"

@@ -82,6 +82,17 @@ body {
   background-color: var(--bg-surface);
 }
 
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent-yt);
+  outline-offset: 3px;
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--accent-yt);
+  outline-offset: 3px;
+}
+
 .title-group {
   display: flex;
   align-items: center;
@@ -369,4 +380,10 @@ input[type="range"]::-moz-range-thumb:hover {
   stroke: var(--text-muted);
   transition: stroke 120ms var(--ease-out), fill 120ms var(--ease-out);
   flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+  }
 }
